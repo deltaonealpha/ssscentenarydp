@@ -1,0 +1,15 @@
+{
+  "name": "ssscentenarydp",
+  "version": "1.0.0",
+  "description": "Sai Centenary DP Maker",
+  "scripts": {
+    "dev": "npx http-server public -p 3000",
+    "build": "echo 'No build step required for static site'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
+}
