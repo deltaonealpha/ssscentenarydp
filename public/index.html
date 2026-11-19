@@ -421,17 +421,19 @@ body {
   var overlay1aImg = new Image();
   var overlay1bImg = new Image();
   var imagesLoaded = 0;
-  var totalImages = 6;
+  var totalImages = dpSrcs.length + 2;
 
   function onImgLoad() {
     imagesLoaded++;
     if (imagesLoaded >= totalImages) renderPreview();
   }
 
-  for (var i = 0; i < 4; i++) {
+  var cardImgs = document.querySelectorAll('.photo-card img');
+  for (var i = 0; i < dpSrcs.length; i++) {
     dpImages[i] = new Image();
     dpImages[i].onload = onImgLoad;
     dpImages[i].src = dpSrcs[i];
+    if (cardImgs[i]) cardImgs[i].src = dpSrcs[i];
   }
   overlay1aImg.onload = onImgLoad;
   overlay1aImg.src = overlay1aSrc;
@@ -557,12 +559,6 @@ body {
   setTimeout(renderPreview, 100);
 })();
 </script>
-
-<!-- Vercel Web Analytics -->
-<script>
-  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/insights/script.js"></script>
 
 </body>
 </html>
