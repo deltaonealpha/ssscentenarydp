@@ -278,6 +278,54 @@ body {
 .download-btn:active { transform: scale(0.97); }
 .download-btn svg { width: 18px; height: 18px; }
 
+.ios-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 999;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+.ios-modal-overlay.active { display: flex; }
+.ios-modal {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 340px;
+  width: 100%;
+  text-align: center;
+}
+.ios-modal img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  display: block;
+  border: 2px solid var(--border);
+}
+.ios-modal p {
+  font-size: 15px;
+  color: var(--fg);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.ios-modal .hint {
+  font-size: 13px;
+  color: var(--fg-muted);
+  margin-bottom: 16px;
+}
+.ios-modal button {
+  padding: 10px 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--fg);
+  font-size: 14px;
+  cursor: pointer;
+}
+
 .instructions {
   padding: 18px 20px;
   background: var(--bg-card);
@@ -391,6 +439,15 @@ body {
       <li>Pinch to zoom so the circle fills the frame, then tap <strong>Done</strong></li>
     </ol>
   </details>
+</div>
+
+<div class="ios-modal-overlay" id="iosModal">
+  <div class="ios-modal">
+    <p><strong>Save Your DP</strong></p>
+    <img id="iosModalImg" alt="Your DP">
+    <p class="hint">Tap and hold the image above, then tap <strong>"Add to Photos"</strong></p>
+    <button id="iosModalClose">Done</button>
+  </div>
 </div>
 
 <script>
@@ -541,6 +598,22 @@ body {
     expCanvas.toBlob(function(blob) {
       if (downloadsApi) {
         downloadsApi.save({ filename: 'SaiCentenary_DP.png', data: blob }).catch(function() {});
+      } else if (isIOS) {
+        var url = URL.createObjectURL(blob);
+        var modal = document.getElementById('iosModal');
+        var modalImg = document.getElementById('iosModalImg');
+        modalImg.src = url;
+        modal.classList.add('active');
+        document.getElementById('iosModalClose').onclick = function() {
+          modal.classList.remove('active');
+          setTimeout(function() { URL.revokeObjectURL(url); }, 500);
+        };
+        modal.onclick = function(e) {
+          if (e.target === modal) {
+            modal.classList.remove('active');
+            setTimeout(function() { URL.revokeObjectURL(url); }, 500);
+          }
+        };
       } else {
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
@@ -553,6 +626,8 @@ body {
       }
     }, 'image/png');
   };
+
+  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
   // Initial render after a tick to let images start loading
   setTimeout(renderPreview, 100);
